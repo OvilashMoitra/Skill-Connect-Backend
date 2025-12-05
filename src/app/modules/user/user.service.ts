@@ -15,8 +15,13 @@ const getUserById = async (id: string): Promise<IUser | null> => {
   return result;
 };
 
+const findByEmail = async (email: string): Promise<IUser | null> => {
+  return User.findOne({ email });
+};
+
 export const UserService = {
   createUser,
   getAllUsers,
   getUserById,
+  findByEmail,
 };
