@@ -12,10 +12,14 @@ const auth =
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       //get authorization token
-      const token = req.headers.authorization;
-      if (!token) {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
         throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
       }
+
+      // Handle both "Bearer <token>" and plain token formats
+      const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+
       // verify token
       let verifiedUser = null;
 
@@ -24,7 +28,7 @@ const auth =
       req.user = verifiedUser; // role  , userid
 
       // role diye guard korar jnno
-      if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
+      if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role.toLowerCase())) {
         throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
       }
       next();

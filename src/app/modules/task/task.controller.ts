@@ -34,8 +34,33 @@ const getTaskById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const logTime = catchAsync(async (req: Request, res: Response) => {
+  const result = await TaskService.logTime(req.params.id, req.user!.userId, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Time logged successfully',
+    data: result,
+  });
+});
+
+const addComment = catchAsync(async (req: Request, res: Response) => {
+  const result = await TaskService.addComment(req.params.id, {
+    text: req.body.text,
+    authorId: req.user!.userId,
+  });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Comment added successfully',
+    data: result,
+  });
+});
+
 const updateTask = catchAsync(async (req: Request, res: Response) => {
-  const result = await TaskService.updateTask(req.params.id, req.body);
+  const userId = req.user?.userId;
+  const role = req.user?.role;
+  const result = await TaskService.updateTask(req.params.id, req.body, userId, role);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -49,4 +74,6 @@ export const TaskController = {
   getAllTasks,
   getTaskById,
   updateTask,
+  logTime,
+  addComment,
 };

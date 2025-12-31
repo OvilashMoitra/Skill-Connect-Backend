@@ -25,7 +25,7 @@ const createAuth = async (payload: IAuth): Promise<IAuth | null> => {
   return authData as IAuth;
 };
 
-const loginAuth = async (payload: IAuth): Promise<{ accessToken: string; refreshToken: string }> => {
+const loginAuth = async (payload: IAuth): Promise<{ accessToken: string; refreshToken: string; user: any }> => {
   const { email, password } = payload;
   const isUserExist = await Auth.findOne({ email }, { email: 1, password: 1, role: 1 });
 
@@ -53,9 +53,21 @@ const loginAuth = async (payload: IAuth): Promise<{ accessToken: string; refresh
     { expiresIn: config.jwt.refresh_expires_in }
   );
 
+  // Fetch profile to get name
+  // We need to import Profile model. 
+  // Since we are in Auth module, we might need to import it.
+  // Ideally this should be decoupled, but for speed:
+  const profile = await import('../profile/profile.model').then(m => m.Profile.findOne({ auth: _id }));
+
   return {
     accessToken,
     refreshToken,
+    user: {
+      _id: isUserExist._id,
+      email: isUserExist.email,
+      role: isUserExist.role,
+      name: profile?.name || 'Unknown',
+    }
   };
 };
 
