@@ -5,7 +5,8 @@ import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
 
 const createProject = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProjectService.createProject(req.body);
+  const projectData = { ...req.body, manager: req.user?.userId }; // Attach logged-in user as manager
+  const result = await ProjectService.createProject(projectData);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -15,7 +16,8 @@ const createProject = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllProjects = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProjectService.getAllProjects();
+  const { userId, role } = req.user as any;
+  const result = await ProjectService.getAllProjects(userId, role);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -34,8 +36,30 @@ const getProjectById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getDashboardStats = catchAsync(async (req: Request, res: Response) => {
+  const result = await ProjectService.getDashboardStats();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Dashboard stats retrieved successfully',
+    data: result,
+  });
+});
+
+const addTeamMember = catchAsync(async (req: Request, res: Response) => {
+  const result = await ProjectService.addTeamMember(req.params.id, req.body.userId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Team member added successfully',
+    data: result,
+  });
+});
+
 export const ProjectController = {
   createProject,
   getAllProjects,
   getProjectById,
+  getDashboardStats,
+  addTeamMember,
 };

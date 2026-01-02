@@ -5,6 +5,8 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   role: 'manager' | 'developer';
+  averageRating: number;
+  ratingsCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +17,8 @@ const UserSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['manager', 'developer'], required: true },
+    averageRating: { type: Number, default: 0 },
+    ratingsCount: { type: Number, default: 0 },
   },
   {
     timestamps: true,
