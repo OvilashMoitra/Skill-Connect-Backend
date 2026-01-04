@@ -1,6 +1,25 @@
 import { Project, IProject } from './project.model';
+import { Auth } from '../auth/auth.model';
+import ApiError from '../../../errors/ApiError';
+import httpStatus from 'http-status';
+
+const MAX_FREE_PROJECTS = 2;
 
 const createProject = async (data: IProject): Promise<IProject> => {
+  // Check project limit for free tier users
+  if (data.manager) {
+    const user = await Auth.findById(data.manager);
+    if (user && !user.paid) {
+      const projectCount = await Project.countDocuments({ manager: data.manager });
+      if (projectCount >= MAX_FREE_PROJECTS) {
+        throw new ApiError(
+          httpStatus.FORBIDDEN,
+          `Free tier users can only create ${MAX_FREE_PROJECTS} projects. Upgrade to premium to create unlimited projects.`
+        );
+      }
+    }
+  }
+
   const result = await Project.create(data);
   return result;
 };

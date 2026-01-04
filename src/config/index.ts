@@ -21,6 +21,7 @@ export default {
   resetPassword_token_secret: process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY,
   bycrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
   stripe_secret_key: process.env.STRIPE_SECRET,
+  stripe_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
   jwt: {
     secret: process.env.JWT_SECRET,
     refresh_secret: process.env.JWT_REFRESH_SECRET,

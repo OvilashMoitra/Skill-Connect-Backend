@@ -19,6 +19,12 @@ router.get(
   ProfileController.getProfile
 );
 
+// Public profile route - no authentication required
+router.get(
+  '/:userId',
+  ProfileController.getPublicProfile
+);
+
 router.patch(
   '/',
   auth('super_admin', 'project_manager', 'developer'),

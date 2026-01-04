@@ -27,7 +27,7 @@ const createAuth = async (payload: IAuth): Promise<IAuth | null> => {
 
 const loginAuth = async (payload: IAuth): Promise<{ accessToken: string; refreshToken: string; user: any }> => {
   const { email, password } = payload;
-  const isUserExist = await Auth.findOne({ email }, { email: 1, password: 1, role: 1 });
+  const isUserExist = await Auth.findOne({ email }, { email: 1, password: 1, role: 1, paid: 1 });
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
@@ -66,6 +66,7 @@ const loginAuth = async (payload: IAuth): Promise<{ accessToken: string; refresh
       _id: isUserExist._id,
       email: isUserExist.email,
       role: isUserExist.role,
+      paid: isUserExist.paid || false,
       name: profile?.name || 'Unknown',
     }
   };

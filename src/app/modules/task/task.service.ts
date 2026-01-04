@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 
 import { Profile } from '../profile/profile.model';
 import { ActivityService } from '../activity/activity.service';
+import { NotificationService } from '../notification/notification.service';
 
 const createTask = async (data: ITask): Promise<ITask> => {
   // Map assignee (ID string) to assigneeId if present
@@ -26,6 +27,20 @@ const createTask = async (data: ITask): Promise<ITask> => {
           status: result.status,
           estimatedTime: result.estimatedTime
         }
+      }
+    });
+  }
+
+  // Create notification for assignee
+  if (data.assigneeId) {
+    await NotificationService.createNotification({
+      userId: data.assigneeId.toString(),
+      type: 'task_assigned',
+      title: 'New Task Assigned',
+      message: `You have been assigned to "${result.title}"`,
+      relatedEntity: {
+        entityType: 'task',
+        entityId: result._id.toString()
       }
     });
   }

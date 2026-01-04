@@ -5,11 +5,13 @@ import { TaskRoutes } from '../modules/task/task.routes';
 import { AuthRoutes } from '../modules/auth/auth.route';
 import { ProfileRoutes } from '../modules/profile/profile.route';
 import { PaymentRoutes } from '../modules/payment/payment.route';
-import { NotificationRoutes } from '../modules/notification/notification.route';
+import { NotificationRoutes } from '../modules/notification/notification.routes';
 import { FeedbackRoutes } from '../modules/feedback/feedback.route';
 import { FileRoutes } from '../modules/file/file.routes';
 import { MilestoneRoutes } from '../modules/milestone/milestone.routes';
 import { ActivityRoutes } from '../modules/activity/activity.routes';
+import { RatingRoutes } from '../modules/rating/rating.routes';
+import { SubscriptionRoutes } from '../modules/subscription/subscription.route';
 
 const router = express.Router();
 
@@ -57,6 +59,14 @@ const moduleRoutes = [
   {
     path: '/activity',
     route: ActivityRoutes,
+  },
+  {
+    path: '/ratings',
+    route: RatingRoutes,
+  },
+  {
+    path: '/subscription',
+    route: SubscriptionRoutes,
   },
 ];
 

@@ -1,30 +1,72 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface INotification extends Document {
-  recipientId: string;
+  userId: mongoose.Types.ObjectId;
+  type: 'task_assigned' | 'task_updated' | 'comment_added' | 'status_changed' |
+  'file_uploaded' | 'deadline_approaching' | 'team_member_added' | 'project_updated';
+  title: string;
   message: string;
-  type: 'assignment' | 'update' | 'payment' | 'deadline' | 'mention';
-  relatedId?: string;
+  relatedEntity: {
+    entityType: 'task' | 'project' | 'comment' | 'file';
+    entityId: mongoose.Types.ObjectId;
+  };
   isRead: boolean;
   createdAt: Date;
-  updatedAt: Date;
 }
 
-const NotificationSchema: Schema = new Schema(
+const NotificationSchema = new Schema<INotification>(
   {
-    recipientId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    message: { type: String, required: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Profile',
+      required: true,
+      index: true,
+    },
     type: {
       type: String,
-      enum: ['assignment', 'update', 'payment', 'deadline', 'mention'],
+      enum: [
+        'task_assigned',
+        'task_updated',
+        'comment_added',
+        'status_changed',
+        'file_uploaded',
+        'deadline_approaching',
+        'team_member_added',
+        'project_updated',
+      ],
       required: true,
     },
-    relatedId: { type: Schema.Types.ObjectId }, // Can ref Task, Project, etc.
-    isRead: { type: Boolean, default: false },
+    title: {
+      type: String,
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+    relatedEntity: {
+      entityType: {
+        type: String,
+        enum: ['task', 'project', 'comment', 'file'],
+        required: true,
+      },
+      entityId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+      },
+    },
+    isRead: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Index for efficient querying
+NotificationSchema.index({ userId: 1, isRead: 1, createdAt: -1 });
 
 export const Notification = mongoose.model<INotification>('Notification', NotificationSchema);

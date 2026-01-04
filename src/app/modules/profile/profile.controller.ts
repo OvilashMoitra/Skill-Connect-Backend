@@ -26,6 +26,17 @@ const getProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getPublicProfile = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const result = await ProfileService.getPublicProfile(userId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Public profile retrieved successfully',
+    data: result,
+  });
+});
+
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
   const { userId } = req.user as any;
   const result = await ProfileService.updateProfile(userId, req.body);
@@ -40,5 +51,6 @@ const updateProfile = catchAsync(async (req: Request, res: Response) => {
 export const ProfileController = {
   createProfile,
   getProfile,
+  getPublicProfile,
   updateProfile,
 };
