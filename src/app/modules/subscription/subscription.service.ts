@@ -5,7 +5,13 @@ import { Auth } from '../auth/auth.model';
 import ApiError from '../../../errors/ApiError';
 import httpStatus from 'http-status';
 
-const stripe = new Stripe(config.stripe_secret_key as string);
+// Initialize Stripe only if API key is provided
+const getStripe = (): Stripe => {
+  if (!config.stripe_secret_key) {
+    throw new ApiError(httpStatus.SERVICE_UNAVAILABLE, 'Stripe is not configured. Please set STRIPE_SECRET in your .env file.');
+  }
+  return new Stripe(config.stripe_secret_key as string);
+};
 
 // Premium subscription price in cents (e.g., $49.99 = 4999 cents)
 const PREMIUM_PRICE_CENTS = 4999;
@@ -29,6 +35,7 @@ const createCheckoutSession = async (
   }
 
   // Create Stripe Checkout session for 1-year subscription payment
+  const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'payment',
@@ -81,6 +88,7 @@ const verifyPayment = async (
   userId: string
 ): Promise<{ success: boolean; message: string }> => {
   // Retrieve the session from Stripe
+  const stripe = getStripe();
   const session = await stripe.checkout.sessions.retrieve(sessionId);
 
   if (!session) {

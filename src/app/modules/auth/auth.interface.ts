@@ -5,6 +5,8 @@ export type IAuth = {
   password?: string;
   role: IAuthRole;
   paid: boolean;
+  isActive?: boolean;
+  isBlocked?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 };

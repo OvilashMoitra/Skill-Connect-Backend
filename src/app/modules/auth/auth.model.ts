@@ -13,6 +13,8 @@ const AuthSchema = new Schema<IAuth>(
       required: true,
     },
     paid: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
+    isBlocked: { type: Boolean, default: false },
   },
   {
     timestamps: true,

@@ -1,6 +1,7 @@
 import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import auth from '../../middlewares/auth';
+import optionalAuth from '../../middlewares/optionalAuth';
 import { ProfileValidation } from './profile.validation';
 import { ProfileController } from './profile.controller';
 
@@ -19,9 +20,17 @@ router.get(
   ProfileController.getProfile
 );
 
-// Public profile route - no authentication required
+// Search profiles - optional authentication (must come before /:userId)
+router.get(
+  '/search',
+  optionalAuth,
+  ProfileController.searchProfiles
+);
+
+// Public profile route - optional authentication for visibility checks
 router.get(
   '/:userId',
+  optionalAuth,
   ProfileController.getPublicProfile
 );
 
